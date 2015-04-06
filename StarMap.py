@@ -1,3 +1,9 @@
+"""
+StarMap
+Written by Jack Rivadeneira
+
+"""
+
 class StarMap:
 	"""Object variables"""
 	x = 3
@@ -91,7 +97,12 @@ class StarMap:
 		# continue doing this.
 		# what if you hit a dead end?
 		# Then you need to expand outward and find your way around the dead end.
-
+		# how you do dis?
+		# this can be done by checking each option node's options
+		# you would also have to clear nodes that have already been visited out of the options
+		# recursion works well for this however we currently have 4 things in the
+		# arguments of this function and it would suck to put all 4 of these 
+		# things back into this function for this effect
 
 
 
