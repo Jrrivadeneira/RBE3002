@@ -1,1 +1,76 @@
-print "hiya"
+class StarMap:
+	"""Object variables"""
+	x = 3
+	y = 4
+	givenMap = []
+
+	"""Constructor """
+	def __init__(self, x, y, givenMap):
+		self.x = x
+		self.y = y
+		i = 0
+		while(i < y):
+			self.givenMap += [givenMap[:x]]
+			givenMap = givenMap[x:]
+			i += 1
+
+	"""Shows the map it is currently dealing with"""
+	def showMap(self):
+		i = 0
+		while(i < len(self.givenMap)):
+			print self.givenMap[i]
+			i+=1
+		return i
+
+	"""gets the current width of the map (number of columns"""
+	def getWidth(self):
+		return self.x
+
+	"""gets the current height of the map (number of rows)"""
+	def getHeight(self):
+		return self.y
+
+	"""Checks if a given point is valid."""
+	def isValidPoint(self, point):
+		return ((point[0] < self.getWidth() and point[0] > 0) and (point[1] < self.getHeight() and point[1] > 0))
+
+	""" Checks to see if the given points contain the same values. """
+	def isSamePoint(self,A,B):
+		return ((A[0] == B[0]) and (A[1] == B[1]))
+	""" Checks to see if the given point is vacant. """
+	def isVacantPoint(self,point):
+		return self.givenMap[point[0]][point[1]] == 0
+
+	""" Returns a list of points that you can go to from the given point. """
+	def getOptions(self,point):
+		# get directions to evaluate 
+		up = [point[0], point[1] - 1]
+		down = [point[0], point[1] + 1]
+		left = [point[0] - 1, point[1]]
+		rite = [point[0] + 1, point[1]]
+		# add them to the directions list (for the sake of extensibility)
+		directions = [up,down,left,rite]
+		# check if points are valid or occupied and if they are eliminate them.
+		fakeInternetPoints = []
+		for pt in directions:
+			if(self.isValidPoint(pt) and self.isVacantPoint(pt)):
+				fakeInternetPoints += [pt]
+		return fakeInternetPoints
+
+	"""I need a thing to find the best route from one point to another.
+	Do diagonals count?"""
+	def getPath(self, currentPosition, targetPosition, currentPath):
+		# Validate points
+		if(not (self.isValidPoint(currentPosition) and self.isValidPoint(targetPosition))):
+			print "Bad Points!"
+			return []
+		# Are we there yet?
+		if(self.isSamePoint(currentPosition,targetPosition)):
+			return currentPath
+		
+
+
+
+k = StarMap(37,37,[0]*37*37)
+print k.showMap()
+print k.getPath([4,3],[32,24],[])
