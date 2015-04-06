@@ -67,7 +67,15 @@ class StarMap:
 		# Are we there yet?
 		if(self.isSamePoint(currentPosition,targetPosition)):
 			return currentPath
-		
+		# The hard part.
+		# The points are valid and we aren't already there.
+		# Damn it.
+		# We need to get a list of locations we can go from our current position.
+		# we need to decide which of these are closest to our goal.
+		# we need to change our current position to that point.
+		# continue doing this.
+		# what if you hit a dead end?
+
 
 
 
