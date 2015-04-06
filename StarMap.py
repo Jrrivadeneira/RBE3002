@@ -57,6 +57,17 @@ class StarMap:
 				fakeInternetPoints += [pt]
 		return fakeInternetPoints
 
+	"""TODO: IMPLEMNT THIS FUNCTION! Returns the distance between the two given points"""
+	def distanceTo(self,currentPoint,targetPoint):
+		return 0
+
+	"""Returns the point that is closer to the target"""
+	def closestPoint(self,pointA,pointB,target):
+		if(self.distanceTo(pointA,target)>self.distanceTo(pointB,target)):
+			return pointB
+		return pointA
+
+
 	"""I need a thing to find the best route from one point to another.
 	Do diagonals count?"""
 	def getPath(self, currentPosition, targetPosition, currentPath):
@@ -71,10 +82,15 @@ class StarMap:
 		# The points are valid and we aren't already there.
 		# Damn it.
 		# We need to get a list of locations we can go from our current position.
+		locations = self.getOptions(currentPosition)
 		# we need to decide which of these are closest to our goal.
+		closest = locations[0]
+		for i in locations[1:]:
+			closest = closestPoint(closest,i,targetPosition)
 		# we need to change our current position to that point.
 		# continue doing this.
 		# what if you hit a dead end?
+		# Then you need to expand outward and find your way around the dead end.
 
 
 
