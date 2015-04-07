@@ -1,19 +1,21 @@
 """
 StarMap
 Written by Jack Rivadeneira
-
 """
-
+from StarNode import StarNode
 class StarMap:
 	"""Object variables"""
 	x = 3
 	y = 4
 	givenMap = []
-
+	start = [0,0]
+	finish = [0,0]
 	"""Constructor """
-	def __init__(self, x, y, givenMap):
+	def __init__(self, x, y, givenMap, start, finish):
 		self.x = x
 		self.y = y
+		self.start = start
+		self.finish = finish
 		i = 0
 		while(i < y):
 			self.givenMap += [givenMap[:x]]
@@ -38,11 +40,12 @@ class StarMap:
 
 	"""Checks if a given point is valid."""
 	def isValidPoint(self, point):
-		return ((point[0] < self.getWidth() and point[0] > 0) and (point[1] < self.getHeight() and point[1] > 0))
+		return ((point[0] < self.getWidth() and point[0] >= 0) and (point[1] < self.getHeight() and point[1] >= 0))
 
 	""" Checks to see if the given points contain the same values. """
 	def isSamePoint(self,A,B):
 		return ((A[0] == B[0]) and (A[1] == B[1]))
+
 	""" Checks to see if the given point is vacant. """
 	def isVacantPoint(self,point):
 		return self.givenMap[point[0]][point[1]] == 0
@@ -54,13 +57,19 @@ class StarMap:
 		down = [point[0], point[1] + 1]
 		left = [point[0] - 1, point[1]]
 		rite = [point[0] + 1, point[1]]
+		topLeft = [point[0] - 1, point[1] - 1]
+		topRite = [point[0] + 1, point[1] - 1]
+		botLeft = [point[0] - 1, point[1] + 1]
+		botRite = [point[0] + 1, point[1] + 1]
 		# add them to the directions list (for the sake of extensibility)
-		directions = [up,down,left,rite]
+		directions = [up,down,left,rite,topRite,topLeft,botRite,botLeft]
 		# check if points are valid or occupied and if they are eliminate them.
 		fakeInternetPoints = []
 		for pt in directions:
-			if(self.isValidPoint(pt) and self.isVacantPoint(pt)):
-				fakeInternetPoints += [pt]
+			# if(self.isValidPoint(pt) and self.isVacantPoint(pt)):
+			if(self.isValidPoint(pt)):
+				fakeInternetPoints += [self.givenMap[pt[0]][pt[1]]]
+		# return the valid points. 
 		return fakeInternetPoints
 
 	"""TODO: IMPLEMNT THIS FUNCTION! Returns the distance between the two given points"""
@@ -73,39 +82,37 @@ class StarMap:
 			return pointB
 		return pointA
 
-
 	"""I need a thing to find the best route from one point to another.
 	Do diagonals count?"""
-	def getPath(self, currentPosition, targetPosition, currentPath):
-		# Validate points
-		if(not (self.isValidPoint(currentPosition) and self.isValidPoint(targetPosition))):
-			print "Bad Points!"
-			return []
-		# Are we there yet?
-		if(self.isSamePoint(currentPosition,targetPosition)):
-			return currentPath
-		# The hard part.
-		# The points are valid and we aren't already there.
-		# Damn it.
-		# We need to get a list of locations we can go from our current position.
-		locations = self.getOptions(currentPosition)
-		# we need to decide which of these are closest to our goal.
-		closest = locations[0]
-		for i in locations[1:]:
-			closest = closestPoint(closest,i,targetPosition)
-		# we need to change our current position to that point.
-		# continue doing this.
-		# what if you hit a dead end?
-		# Then you need to expand outward and find your way around the dead end.
-		# how you do dis?
-		# this can be done by checking each option node's options
-		# you would also have to clear nodes that have already been visited out of the options
-		# recursion works well for this however we currently have 4 things in the
-		# arguments of this function and it would suck to put all 4 of these 
-		# things back into this function for this effect
+	def createMap(self):
+		yp = 0
+		while(yp < self.getHeight()):
+			xp = 0
+			while(xp < self.getWidth()):
+				if(self.isVacantPoint([xp,yp])):
+					self.givenMap[xp][yp] = StarNode([xp,yp], self)
+				xp += 1
+			yp += 1
+		yp = 0
+		while(yp < self.getHeight()):
+			xp = 0
+			while(xp < self.getWidth()):
+				# add edges by using the get options
+				self.givenMap[xp][yp].edges = self.getOptions([xp,yp])
+				xp += 1
+			yp += 1
+		#linearizin the list
+		linearList = []
+		for i in self.givenMap:
+			linearList+=i
+		sortedList = []
+		for i in linearList:
+			i.calculateScores()
+			sortedList += [i.toList()]
+		sortedList.sort()
 
 
-
-k = StarMap(37,37,[0]*37*37)
-print k.showMap()
-print k.getPath([4,3],[32,24],[])
+k = StarMap(37,37,[0]*37*37,[4,3],[32,24])
+k.createMap()
+# print k.showMap()
+# print k.givenMap[0][0].edges
