@@ -1,3 +1,5 @@
+import numpy
+
 class StarMap:
 	"""Object variables"""
 	x = 3
@@ -9,6 +11,7 @@ class StarMap:
 		self.x = x
 		self.y = y
 		i = 0
+		print "start"
 		while(i < y):
 			self.givenMap += [givenMap[:x]]
 			givenMap = givenMap[x:]
@@ -59,7 +62,7 @@ class StarMap:
 
 	"""TODO: IMPLEMNT THIS FUNCTION! Returns the distance between the two given points"""
 	def distanceTo(self,currentPoint,targetPoint):
-		return 0
+		return numpy.sqrt((currentPoint[0] - targetPoint[0])^2 + (currentPoint[1] - targetPoint[1])^2)
 
 	"""Returns the point that is closer to the target"""
 	def closestPoint(self,pointA,pointB,target):
@@ -77,6 +80,7 @@ class StarMap:
 			return []
 		# Are we there yet?
 		if(self.isSamePoint(currentPosition,targetPosition)):
+			print currentPath
 			return currentPath
 		# The hard part.
 		# The points are valid and we aren't already there.
@@ -86,7 +90,7 @@ class StarMap:
 		# we need to decide which of these are closest to our goal.
 		closest = locations[0]
 		for i in locations[1:]:
-			closest = closestPoint(closest,i,targetPosition)
+			closest = self.closestPoint(closest,i,targetPosition)
 		# we need to change our current position to that point.
 		# continue doing this.
 		# what if you hit a dead end?
@@ -95,6 +99,6 @@ class StarMap:
 
 
 
-k = StarMap(37,37,[0]*37*37)
+"""k = StarMap(37,37,[0]*37*37)
 print k.showMap()
-print k.getPath([4,3],[32,24],[])
+print k.getPath([4,3],[32,24],[])"""
