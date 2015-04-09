@@ -2,6 +2,9 @@
 StarMap
 Written by Jack Rivadeneira
 """
+
+import rospy
+
 from StarNode import StarNode
 class StarMap:
 	"""Object variables"""
@@ -10,6 +13,10 @@ class StarMap:
 	givenMap = []
 	start = [0,0]
 	finish = [0,0]
+	closedSet = []
+	openSet = []
+	path = []
+
 	"""Constructor """
 	def __init__(self, x, y, givenMap, start, finish):
 		self.x = x
@@ -21,6 +28,21 @@ class StarMap:
 			self.givenMap += [givenMap[:x]]
 			givenMap = givenMap[x:]
 			i += 1
+
+	"""return the set of cells which is the most efficient path"""
+	def rebuildPath(self, node):
+		path = [node]
+
+		while node.location != self.start:
+			print node.location, node
+			node = node.FromNodes[0]
+
+		return path
+
+		if node == None:
+			return path
+		path += self.rebuildPath(node.FromNodes[0])
+		return
 
 	"""Shows the map it is currently dealing with"""
 	def showMap(self):
@@ -149,7 +171,7 @@ class StarMap:
 						current = self.minF(openSet) #lowest FScore
 
 						if current.location == self.finish:
-							return rebuildPath(current)
+							return self.rebuildPath(current)
 
 						closedSet.append(current)
 						openSet.remove(current)
@@ -162,8 +184,8 @@ class StarMap:
 							if fblthp in closedSet:
 								tentativeG = current.GScore #distance between current and fblthp
 
-							if (not fblthp in openSet) or (tentativeG < fblthp.GScore):
-								fblthp.FromNodes = [current]
+							if (not fblthp in openSet) or (tentativeG <= fblthp.GScore):
+								fblthp.FromNodes.append(current)
 								fblthp.calculateScores(self.finish)
 								if fblthp not in openSet:
 									openSet.append(fblthp)
