@@ -135,10 +135,27 @@ class StarMap:
 					closedSet = i
 
 					while len(openSet) > 0:
-						current = #lowest FScore
+						current = minF(openSet)#lowest FScore
 
-						if current.location = self.finish:
-							
+						if current.location == self.finish:
+							return rebuildPath(current)
+
+						closedSet.add(current)
+						openSet.remove(current)
+						for fblthp in current.edges:
+							tentativeG = 0
+							if closedSet.contains(fblthp):
+								tentativeG = current.GScore #distance between current and fblthp
+
+							if (not openSet.contains(fblthp)) or (tentativeG < fblthp.GScore):
+								fblthp.FromNodes[0] = current
+								fblthp.calculateScores(self.finish)
+								if openSet.contains():
+									openSet.add(fblthp)
+
+					return false
+
+
 
 
 
