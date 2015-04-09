@@ -2,7 +2,7 @@ import rospy, roslib
 from nav_msgs.msg import *
 from nav_msgs.srv import *
 from StarMap import *
-
+"""Documentation"""
 def mapCallback(msg):
 	global current_map
 
