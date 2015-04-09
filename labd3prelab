@@ -1,6 +1,7 @@
 import rospy, roslib
 from nav_msgs.msg import *
 from nav_msgs.srv import *
+from StarMap import *
 
 def mapCallback(msg):
 	global current_map
@@ -57,8 +58,6 @@ if __name__ == '__main__':
 
 	CMList = list(current_map.data)
 
-	CMList[0] = 0
-
 	current_map.data = tuple(CMList)
 
 	newMap = OccupancyGrid()
@@ -68,13 +67,16 @@ if __name__ == '__main__':
 	newMap.info.map_load_time = rospy.Time.now()
 	newMap.data = current_map.data
 
+	print "test"
+
 	mapPub1.publish(newMap)
 
-	print newMap
+	navmap = StarMap(37, 37, CMList)
+
+	navmap.showMap()
+	print navmap.getPath([4,3],[32,24],[])
 
 	print "GOGOGO!"
 
-	while True:
-		mapPub1.publish(newMap)
-		rospy.sleep(rospy.Duration(1,0))
+	exit()
 	
