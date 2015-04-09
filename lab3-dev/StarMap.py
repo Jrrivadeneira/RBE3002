@@ -34,7 +34,9 @@ class StarMap:
 		path = [node]
 
 		while node.location != self.start:
-			print node.location, node
+			print node.location, node.edges
+			for e in node.edges:
+				print node.location, e.location
 			node = node.FromNodes[0]
 
 		return path
