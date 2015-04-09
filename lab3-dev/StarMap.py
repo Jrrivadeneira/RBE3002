@@ -154,15 +154,19 @@ class StarMap:
 						closedSet.append(current)
 						openSet.remove(current)
 						for fblthp in current.edges:
+
+							if fblthp == 100:
+								break
+
 							tentativeG = 0
-							if closedSet.contains(fblthp):
+							if fblthp in closedSet:
 								tentativeG = current.GScore #distance between current and fblthp
 
-							if (not openSet.contains(fblthp)) or (tentativeG < fblthp.GScore):
-								fblthp.FromNodes[0] = current
+							if (not fblthp in openSet) or (tentativeG < fblthp.GScore):
+								fblthp.FromNodes = [current]
 								fblthp.calculateScores(self.finish)
-								if openSet.contains():
-									openSet.add(fblthp)
+								if fblthp not in openSet:
+									openSet.append(fblthp)
 
 					return false
 
