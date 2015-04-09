@@ -2,7 +2,7 @@ import rospy, roslib
 from nav_msgs.msg import *
 from nav_msgs.srv import *
 from StarMap import *
-"""Documentation"""
+
 def mapCallback(msg):
 	global current_map
 
@@ -66,12 +66,14 @@ if __name__ == '__main__':
 	newMap.info = current_map.info
 	newMap.info.map_load_time = rospy.Time.now()
 	newMap.data = current_map.data
-
+	# tell me things
+	resolution = newMap.info.resolution
+	
 	print "test"
 
 	mapPub1.publish(newMap)
 
-	navmap = StarMap(37, 37, CMList,[2,2],[5, 2])
+	navmap = StarMap(37, 37, CMList,[4,3],[32,24])
 
 	navmap.showMap()
 	navmap.createMap()
