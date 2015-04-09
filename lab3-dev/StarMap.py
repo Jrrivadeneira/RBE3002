@@ -29,6 +29,17 @@ class StarMap:
 			i+=1
 		return i
 
+	"""returns the node with the smallest F score"""
+	def minF(self, openSet):
+		pivot = 999999999
+		smallest = openSet[0]
+		for i in openSet:
+			if i.FScore < pivot:
+				smallest = i
+				pivot = i.FScore
+
+		return smallest
+
 	"""gets the current width of the map (number of columns"""
 	def getWidth(self):
 		return self.x
@@ -132,15 +143,15 @@ class StarMap:
 					i.GScore = 0
 
 					openSet = i.edges
-					closedSet = i
+					closedSet = [i]
 
 					while len(openSet) > 0:
-						current = minF(openSet)#lowest FScore
+						current = self.minF(openSet) #lowest FScore
 
 						if current.location == self.finish:
 							return rebuildPath(current)
 
-						closedSet.add(current)
+						closedSet.append(current)
 						openSet.remove(current)
 						for fblthp in current.edges:
 							tentativeG = 0
@@ -154,9 +165,6 @@ class StarMap:
 									openSet.add(fblthp)
 
 					return false
-
-
-
 
 
 # print k.showMap()
