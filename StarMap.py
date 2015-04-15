@@ -31,7 +31,7 @@ class StarMap:
 
 	"""return the set of cells which is the most efficient path"""
 	def rebuildPath(self, node):
-		path = [node]
+		self.path += [node]
 
 		while node.location != self.start:
 			print node.location, node.edges
@@ -39,11 +39,11 @@ class StarMap:
 				print node.location, e.location
 			node = node.FromNodes[0]
 
-		return path
+		return self.path
 
 		if node == None:
-			return path
-		path += self.rebuildPath(node.FromNodes[0])
+			return self.path
+		self.path += self.rebuildPath(node.FromNodes[0])
 		return
 
 	"""Shows the map it is currently dealing with"""
@@ -108,7 +108,7 @@ class StarMap:
 
 	"""TODO: IMPLEMNT THIS FUNCTION! Returns the distance between the two given points"""
 	def distanceTo(self,currentPoint,targetPoint):
-		return 0
+		return (((currentPoint[0] - targetPoint[0]) ** 2) + ((currentPoint[1] - targetpoint[1]) ** 2)) ** (0.5)
 
 	"""Returns the point that is closer to the target"""
 	def closestPoint(self,pointA,pointB,target):
@@ -191,7 +191,6 @@ class StarMap:
 								fblthp.calculateScores(self.finish)
 								if fblthp not in openSet:
 									openSet.append(fblthp)
-
 					return false
 
 

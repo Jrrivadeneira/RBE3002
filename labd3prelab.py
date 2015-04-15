@@ -5,9 +5,7 @@ from StarMap import *
 
 def mapCallback(msg):
 	global current_map
-
 	print msg
-
 	#setting the global map
 	current_map = msg
 
