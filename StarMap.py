@@ -2,6 +2,9 @@
 StarMap
 Written by Jack Rivadeneira
 """
+
+import rospy
+
 from StarNode import StarNode
 class StarMap:
 	"""Object variables"""
@@ -10,6 +13,10 @@ class StarMap:
 	givenMap = []
 	start = [0,0]
 	finish = [0,0]
+	closedSet = []
+	openSet = []
+	path = []
+
 	"""Constructor """
 	def __init__(self, x, y, givenMap, start, finish):
 		self.x = x
@@ -22,13 +29,40 @@ class StarMap:
 			givenMap = givenMap[x:]
 			i += 1
 
+	"""return the set of cells which is the most efficient path"""
+	def rebuildPath(self, node):
+		path = [node]
+
+		while node.location != self.start:
+			print node.location, node.edges
+			for e in node.edges:
+				print node.location, e.location
+			node = node.FromNodes[0]
+
+		return path
+
+		if node == None:
+			return path
+		path += self.rebuildPath(node.FromNodes[0])
+		return
+
 	"""Shows the map it is currently dealing with"""
 	def showMap(self):
 		i = 0
 		while(i < len(self.givenMap)):
-			print self.givenMap[i]
 			i+=1
 		return i
+
+	"""returns the node with the smallest F score"""
+	def minF(self, openSet):
+		pivot = 999999999
+		smallest = openSet[0]
+		for i in openSet:
+			if i.FScore < pivot:
+				smallest = i
+				pivot = i.FScore
+
+		return smallest
 
 	"""gets the current width of the map (number of columns"""
 	def getWidth(self):
@@ -98,7 +132,8 @@ class StarMap:
 			xp = 0
 			while(xp < self.getWidth()):
 				# add edges by using the get options
-				self.givenMap[xp][yp].edges = self.getOptions([xp,yp])
+				if self.givenMap[xp][yp] != 100:
+					self.givenMap[xp][yp].edges = self.getOptions([xp,yp])
 				xp += 1
 			yp += 1
 		#linearizin the list
@@ -107,12 +142,58 @@ class StarMap:
 			linearList+=i
 		sortedList = []
 		for i in linearList:
-			i.calculateScores()
-			sortedList += [i.toList()]
+			if i != 100:
+				i.calculateScores(self.finish)
+				sortedList += [i.toList()]
 		sortedList.sort()
+		sortedList.reverse()
+		
+		for i in linearList:
+			if i != 100:
+				i.calculateScores(self.finish)
+				
+				#this code is based off of the pseudocode on Wikipedia about A*
+				closedSet = []
+				openSet = []
+
+				#find the start node
+				if i.location == self.start:
+
+					#set the from node of each edge to the start node
+					for j in i.edges:
+						j.FromNodes = [i]
+						j.calculateScores(self.finish)
+					print "found start at ", i.location
+					i.GScore = 0
+
+					openSet = i.edges
+					closedSet = [i]
+
+					while len(openSet) > 0:
+						current = self.minF(openSet) #lowest FScore
+
+						if current.location == self.finish:
+							return self.rebuildPath(current)
+
+						closedSet.append(current)
+						openSet.remove(current)
+						for fblthp in current.edges:
+
+							if fblthp == 100:
+								break
+
+							tentativeG = 0
+							if fblthp in closedSet:
+								tentativeG = current.GScore #distance between current and fblthp
+
+							if (not fblthp in openSet) or (tentativeG <= fblthp.GScore):
+								fblthp.FromNodes.append(current)
+								fblthp.calculateScores(self.finish)
+								if fblthp not in openSet:
+									openSet.append(fblthp)
+
+					return false
 
 
-k = StarMap(37,37,[0]*37*37,[4,3],[32,24])
-k.createMap()
 # print k.showMap()
 # print k.givenMap[0][0].edges
