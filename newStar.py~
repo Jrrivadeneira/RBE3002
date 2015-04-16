@@ -72,14 +72,6 @@ class Node:
 		if (self.origin == -1):
 			return [self.location]
 		return [self.rogers[self.origin].traceback] + [self.location]
-		
-	def minF(openSet):
-	    
-	    indexBestF = openSet[0].index(min(openSet[0]))
-	    
-	    nodeBestF = openSet[1][indexBestF]
-	    
-	    return nodeBestF
 
 	def findPath(self, finish):
 		sets = self.search(finish, 0, [],[])
