@@ -30,9 +30,58 @@ def InitSubs():
 	return [mapSub, odomSub, goalSub]
 
 #publish map
-def CSpaceMap():
+def CSpaceMap(mapMsg):
 
-	return
+	array = mapToArray(mapMsg)
+
+	for i in range(mapMsg.info.width):
+		for j in range(mapMsg.info.height):
+			if (array[i][j] == 100):
+				for k in range(-1,2):
+					print k
+					for l in range(-1,2):
+						if ((i+k > 0 and i+k < mapMsg.info.width) and (j+l > 0 and j+l <mapMsg.info.height)):
+							array[i+k][j+l]= max(50,array[i+k][j+l])
+
+
+	for i in range(mapMsg.info.width):
+		for j in range(mapMsg.info.height):
+			if (array[i][j] == 50):
+				array[i][j] = 100
+
+	newArray = []
+
+	for i in range(mapMsg.info.width):
+		newArray = newArray + array[i]
+
+	#print newArray
+	mapMsg.data = tuple(newArray)
+
+	return mapMsg
+
+#turn a map into an array
+def mapToArray(mapMsg):
+
+	data = list(mapMsg.data)
+	width = mapMsg.info.width
+	height = mapMsg.info.height
+
+
+	array = [0]*width
+	array = [array]*height
+
+	i = 0
+	while (i < height):
+
+		#print i
+
+		array[i] = data[i*width:(i+1)*width]
+
+		i += 1
+
+	#print (len(array)), len(array[0])
+
+	return array
 
 """convert an Odometry object to a coordinate on the map"""
 def Odom2Coord(odom, navMap):
@@ -53,6 +102,9 @@ def Odom2Coord(odom, navMap):
 
 	return relCoord
 
+def coor2Odom(coord, navMap):
+	relCoord[0] = coord[0]*0
+
 """navigate to a point"""
 def Nav2Point(start, goal, worldMap):
 
@@ -68,25 +120,34 @@ if __name__ == '__main__':
 	[mapSub, odomSub, goalSub] = InitSubs()
 
 	testGridPub = rospy.Publisher('/testGrid', GridCells, queue_size=1)
+	expandMapPub = rospy.Publisher('/exmap',OccupancyGrid,queue_size=1)
 
 	rospy.sleep(1)
 
+	res = worldMap.info.resolution
+
 	testCells = GridCells()
-	testCells.cell_width = worldMap.info.resolution
-	testCells.cell_height = testCells.cell_width
+	testCells.cell_width = res
+	testCells.cell_height = res
 	testCells.header.frame_id = 'map'
 
 	points = [Point(),Point(),Point(),Point()]
-	points[1].x = 1.0
-	points[2].y = 1.0
-	points[3].x = 1.0
-	points[3].y = 1.0
+	points[1].x = 1.0*res
+	points[2].y = 1.0*res
+	points[3].x = 1.0*res
+	points[3].y = 1.0*res
 
 	testCells.cells = points
 
 	testGridPub.publish(testCells)
 
-	print testCells
+	#print mapToArray(worldMap)
+
+	#print testCells
+
+	embiggenedMap = CSpaceMap(worldMap)
+
+	#print embiggenedMap
 
 	#initialize things
 	position = [0, 0]
@@ -97,6 +158,7 @@ if __name__ == '__main__':
 
 	while (True):
 		testGridPub.publish(testCells)
+		expandMapPub.publish(embiggenedMap)
 		rospy.sleep(1)
 
 	#always be navigating
