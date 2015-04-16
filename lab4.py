@@ -34,6 +34,30 @@ def CSpaceMap():
 
 	return
 
+#turn a map into an array
+def mapToArray(mapMsg):
+
+	data = list(mapMsg.data)
+	width = mapMsg.info.width
+	height = mapMsg.info.height
+
+
+	array = [0]*width
+	array = [array]*height
+
+	i = 0
+	while (i < height):
+		print array
+
+		print i*width, ":",(i+1)*width-1
+		print len(data)
+
+		array[i] = data[i*width:(i+1)*width-1]
+
+		i += 1
+
+	return array
+
 """convert an Odometry object to a coordinate on the map"""
 def Odom2Coord(odom, navMap):
 	
@@ -71,20 +95,24 @@ if __name__ == '__main__':
 
 	rospy.sleep(1)
 
+	res = worldMap.info.resolution
+
 	testCells = GridCells()
-	testCells.cell_width = worldMap.info.resolution
-	testCells.cell_height = testCells.cell_width
+	testCells.cell_width = res
+	testCells.cell_height = res
 	testCells.header.frame_id = 'map'
 
 	points = [Point(),Point(),Point(),Point()]
-	points[1].x = 1.0
-	points[2].y = 1.0
-	points[3].x = 1.0
-	points[3].y = 1.0
+	points[1].x = 1.0*res
+	points[2].y = 1.0*res
+	points[3].x = 1.0*res
+	points[3].y = 1.0*res
 
 	testCells.cells = points
 
 	testGridPub.publish(testCells)
+
+	print mapToArray(worldMap)
 
 	print testCells
 
