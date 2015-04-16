@@ -1,4 +1,4 @@
-
+ 
 class Node:
 	# surrounding nodes
 	rogers = [0, 0, 0, 0, 0, 0, 0, 0]
