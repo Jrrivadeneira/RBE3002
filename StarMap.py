@@ -31,25 +31,19 @@ class StarMap:
 
 	"""return the set of cells which is the most efficient path"""
 	def rebuildPath(self, node):
-		self.path += [node]
-
 		while node.location != self.start:
-			print node.location, node.edges
-			for e in node.edges:
-				print node.location, e.location
+			print node.location
+			self.path += [node]
 			node = node.FromNodes[0]
-
+			for q in node.FromNodes:
+				print q.location
 		return self.path
-
-		if node == None:
-			return self.path
-		self.path += self.rebuildPath(node.FromNodes[0])
-		return
 
 	"""Shows the map it is currently dealing with"""
 	def showMap(self):
 		i = 0
 		while(i < len(self.givenMap)):
+			print self.givenMap[i]
 			i+=1
 		return i
 
@@ -178,16 +172,13 @@ class StarMap:
 						closedSet.append(current)
 						openSet.remove(current)
 						for fblthp in current.edges:
-
 							if fblthp == 100:
 								break
-
 							tentativeG = 0
 							if fblthp in closedSet:
 								tentativeG = current.GScore #distance between current and fblthp
-
 							if (not fblthp in openSet) or (tentativeG <= fblthp.GScore):
-								fblthp.FromNodes.append(current)
+								fblthp.FromNodes = [current]
 								fblthp.calculateScores(self.finish)
 								if fblthp not in openSet:
 									openSet.append(fblthp)

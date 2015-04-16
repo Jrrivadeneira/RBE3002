@@ -71,10 +71,12 @@ if __name__ == '__main__':
 
 	mapPub1.publish(newMap)
 
-	navmap = StarMap(37, 37, CMList,[4,3],[32,24])
+	navmap = StarMap(37, 37, CMList,[3,3],[5,16])
 
 	navmap.showMap()
 	navmap.createMap()
+	#for i in navmap.path:
+	#	print i.location
 
 	exit()
 	
