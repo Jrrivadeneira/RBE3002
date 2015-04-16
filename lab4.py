@@ -1,10 +1,9 @@
 import rospy, tf
-from SubsNPubs import *
 import StarMap
 from nav_msgs.srv import GetMapRequest, GetMapResponse
 from nav_msgs.msg import Odometry
 from nav_msgs.msg import OccupancyGrid, GridCells
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Point
 
 worldMap = 0
 
@@ -67,8 +66,27 @@ if __name__ == '__main__':
 
 	#subscribe to relevant topics with SubsNPubs function
 	[mapSub, odomSub, goalSub] = InitSubs()
+
+	testGridPub = rospy.Publisher('/testGrid', GridCells, queue_size=1)
+
 	rospy.sleep(1)
-	print GridCells()	
+
+	testCells = GridCells()
+	testCells.cell_width = worldMap.info.resolution
+	testCells.cell_height = testCells.cell_width
+	testCells.header.frame_id = 'map'
+
+	points = [Point(),Point(),Point(),Point()]
+	points[1].x = 1.0
+	points[2].y = 1.0
+	points[3].x = 1.0
+	points[3].y = 1.0
+
+	testCells.cells = points
+
+	testGridPub.publish(testCells)
+
+	print testCells
 
 	#initialize things
 	position = [0, 0]
@@ -76,6 +94,10 @@ if __name__ == '__main__':
 
 	#convert robot odometry to a node position on the map
 	position = Odom2Coord(robotOdom, worldMap)
+
+	while (True):
+		testGridPub.publish(testCells)
+		rospy.sleep(1)
 
 	#always be navigating
 	while (True):
