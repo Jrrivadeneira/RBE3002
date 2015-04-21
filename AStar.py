@@ -20,7 +20,7 @@ class AStarMap:
 			return node.cost # if youve recursed back far enough then youve hit the start node and can now return the whole cost.
 		return node.cost + self.calculateGScore(node.parent) # returns the cost to go from the parent to the current node and recurses back
 	
-	"""Calculates the huristic score for the given node"""
+	"""Calculates the huristic score for the given node. required for FScore to work"""
 	def calculateHScore(self,node):
 		#These names are long and annoying and i dont want to deal with them.
 		tx = self.target.position[0]
